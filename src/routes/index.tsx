@@ -54,17 +54,15 @@ function Hero() {
         <div className="max-w-2xl animate-fade-in-up">
           <div className="mb-6 inline-flex w-fit items-center gap-2 rounded-full border border-border bg-card/70 px-4 py-1.5 text-xs font-medium text-foreground backdrop-blur">
             <span className="flex h-2 w-2 rounded-full bg-success animate-pulse" />
-            Trusted by 50,000+ Africans
+            50,000+ customers
           </div>
 
           <h1 className="font-display text-4xl font-bold leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl">
-            Get Instant Loans{" "}
-            <span className="gradient-text">Straight to Your Phone</span>
+            Loans, <span className="gradient-text">straight to your phone</span>
           </h1>
 
-          <p className="mt-6 max-w-xl text-lg text-foreground/80">
-            Vites delivers fast, secure mobile loans built around your life.
-            Approval in seconds. Funds in minutes. Zero paperwork.
+          <p className="mt-5 max-w-md text-base text-foreground/80 sm:text-lg">
+            Approved in seconds. Funded in minutes.
           </p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -82,17 +80,6 @@ function Hero() {
               Apply Now
               <Sparkles className="h-4 w-4" />
             </Link>
-          </div>
-
-          <div className="mt-10 flex flex-wrap items-center gap-6 text-sm text-foreground/80">
-            <div className="flex items-center gap-2">
-              <BadgeCheck className="h-5 w-5 text-success" />
-              Licensed & regulated
-            </div>
-            <div className="flex items-center gap-2">
-              <Shield className="h-5 w-5 text-success" />
-              Bank-grade security
-            </div>
           </div>
         </div>
 
