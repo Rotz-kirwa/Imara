@@ -155,13 +155,109 @@ function ApplyPage() {
     );
   }
 
+  if (!pkg) {
+    return (
+      <div className="relative overflow-hidden">
+        <div className="absolute inset-0 gradient-mesh opacity-40" aria-hidden />
+        <div className="relative mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-primary">Choose your loan</p>
+            <h1 className="font-display text-3xl font-bold sm:text-5xl">Pick a package that fits</h1>
+            <p className="mt-3 text-muted-foreground">Three flexible options. Tap a card to start your application.</p>
+          </div>
+
+          <div className="mt-12 grid gap-6 md:grid-cols-3">
+            {PACKAGES.map((p) => (
+              <button
+                key={p.id}
+                onClick={() => choosePackage(p)}
+                className={`group relative overflow-hidden rounded-3xl bg-gradient-to-br ${p.gradient} p-[1.5px] text-left shadow-elegant transition-all hover:-translate-y-2 hover:shadow-glow ${p.badge ? "md:-mt-4 md:mb-4" : ""}`}
+              >
+                <div className="relative h-full rounded-[calc(1.5rem-1.5px)] bg-card p-7">
+                  {/* Decorative blobs */}
+                  <div className={`absolute -right-10 -top-10 h-32 w-32 rounded-full bg-gradient-to-br ${p.gradient} opacity-20 blur-2xl`} />
+                  <div className={`absolute -left-10 -bottom-10 h-32 w-32 rounded-full bg-gradient-to-br ${p.gradient} opacity-15 blur-2xl`} />
+
+                  {p.badge && (
+                    <span className={`absolute right-5 top-5 rounded-full bg-gradient-to-r ${p.gradient} px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white shadow-card`}>
+                      {p.badge}
+                    </span>
+                  )}
+
+                  <div className={`mb-5 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${p.gradient} text-white shadow-card`}>
+                    <p.icon className="h-7 w-7" />
+                  </div>
+
+                  <h3 className="font-display text-2xl font-bold">{p.name}</h3>
+                  <p className={`mt-2 bg-gradient-to-r ${p.gradient} bg-clip-text text-2xl font-extrabold text-transparent`}>
+                    {p.range}
+                  </p>
+
+                  <div className="mt-5 grid grid-cols-2 gap-3 text-xs">
+                    <div className="rounded-xl bg-muted/50 p-3">
+                      <p className="text-muted-foreground">Interest</p>
+                      <p className="mt-0.5 font-semibold text-foreground">{p.rate}</p>
+                    </div>
+                    <div className="rounded-xl bg-muted/50 p-3">
+                      <p className="text-muted-foreground">Term</p>
+                      <p className="mt-0.5 font-semibold text-foreground">{p.term}</p>
+                    </div>
+                  </div>
+
+                  <ul className="mt-5 space-y-2 text-sm">
+                    {p.perks.map((perk) => (
+                      <li key={perk} className="flex items-center gap-2">
+                        <CheckCircle className="h-4 w-4 shrink-0 text-success" />
+                        <span>{perk}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <div className={`mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r ${p.gradient} px-5 py-3 text-sm font-semibold text-white shadow-card transition-all group-hover:shadow-glow`}>
+                    Select & continue
+                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
+
+          <p className="mt-10 text-center text-xs text-muted-foreground">
+            Not sure how much you need? <a href="/eligibility" className="font-semibold text-primary hover:underline">Check eligibility first</a>
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="relative overflow-hidden">
       <div className="absolute inset-0 gradient-mesh opacity-40" aria-hidden />
       <div className="relative mx-auto max-w-3xl px-4 py-16 sm:px-6">
+        <button
+          onClick={() => setPkg(null)}
+          className="mb-6 inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground"
+        >
+          <ArrowLeft className="h-4 w-4" /> Change package
+        </button>
+
+        <div className={`mb-8 overflow-hidden rounded-2xl bg-gradient-to-r ${pkg.gradient} p-[1.5px] shadow-card`}>
+          <div className="flex items-center justify-between rounded-[calc(1rem-1.5px)] bg-card px-5 py-4">
+            <div className="flex items-center gap-3">
+              <div className={`flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br ${pkg.gradient} text-white`}>
+                <pkg.icon className="h-5 w-5" />
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Selected package</p>
+                <p className="font-semibold">{pkg.name} · {pkg.range}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div className="mb-8 text-center">
           <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-primary">Loan application</p>
-          <h1 className="font-display text-3xl font-bold sm:text-4xl">Apply for your Vites loan</h1>
+          <h1 className="font-display text-3xl font-bold sm:text-4xl">Complete your application</h1>
           <p className="mt-2 text-sm text-muted-foreground">All fields are required. It only takes 2 minutes.</p>
         </div>
 
