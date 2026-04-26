@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { z } from "zod";
-import { CheckCircle2, Sparkles, Loader2 } from "lucide-react";
+import { CheckCircle2, Sparkles, Loader2, ArrowLeft, ArrowRight, Zap, Rocket, Crown, CheckCircle } from "lucide-react";
 
 export const Route = createFileRoute("/apply")({
   head: () => ({
