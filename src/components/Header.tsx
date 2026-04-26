@@ -46,7 +46,7 @@ export function Header() {
             </Link>
             <Link
               to="/apply"
-              className="rounded-full bg-gradient-to-r from-primary to-accent px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-card transition-all hover:shadow-elegant hover:-translate-y-0.5"
+              className="btn-apply rounded-full px-5 py-2.5 text-sm font-bold tracking-wide"
             >
               Apply Now
             </Link>
@@ -77,7 +77,7 @@ export function Header() {
               <Link
                 to="/apply"
                 onClick={() => setOpen(false)}
-                className="mt-2 rounded-full bg-gradient-to-r from-primary to-accent px-5 py-2.5 text-center text-sm font-semibold text-primary-foreground"
+                className="btn-apply mt-2 rounded-full px-5 py-2.5 text-center text-sm font-bold tracking-wide"
               >
                 Apply Now
               </Link>

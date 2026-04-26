@@ -1,9 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   Smartphone, Zap, Shield, TrendingUp, Clock, Wallet, CheckCircle2,
-  ArrowRight, Star, Users, BadgeCheck, Sparkles
+  ArrowRight, Star, Users, BadgeCheck
 } from "lucide-react";
 import heroImg from "@/assets/hero-vites.jpg";
+import { LoanTicker } from "@/components/LoanTicker";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -20,6 +21,7 @@ export const Route = createFileRoute("/")({
 function HomePage() {
   return (
     <>
+      <LoanTicker />
       <Hero />
       <TrustBar />
       <HowItWorks />
@@ -44,9 +46,6 @@ function Hero() {
           width={1600}
           height={1200}
         />
-        {/* Layered overlays for legibility */}
-        <div className="absolute inset-0 bg-gradient-to-r from-background/70 via-background/30 to-transparent lg:from-background/60 lg:via-background/15" />
-        <div className="absolute inset-0 bg-gradient-to-t from-background/40 via-transparent to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-tr from-primary/15 via-transparent to-accent/10" />
       </div>
 
@@ -65,7 +64,7 @@ function Hero() {
             Approved in seconds. Funded in minutes.
           </p>
 
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-end">
             <Link
               to="/eligibility"
               className="group inline-flex items-center justify-center gap-2 rounded-full border border-border bg-card/80 px-6 py-3.5 text-sm font-semibold backdrop-blur shadow-card transition-all hover:-translate-y-0.5 hover:shadow-elegant hover:bg-card"
@@ -73,13 +72,21 @@ function Hero() {
               Check Eligibility
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Link>
-            <Link
-              to="/apply"
-              className="group inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-primary to-accent px-6 py-3.5 text-sm font-semibold text-primary-foreground shadow-elegant transition-all hover:-translate-y-0.5 hover:shadow-glow"
-            >
-              Apply Now
-              <Sparkles className="h-4 w-4" />
-            </Link>
+
+            {/* Hero CTA */}
+            <div className="flex flex-col items-center gap-1.5 sm:items-start">
+              <Link
+                to="/apply"
+                className="btn-apply-hero group inline-flex w-full items-center justify-center gap-2.5 rounded-full px-9 py-4 text-base font-extrabold tracking-wide sm:w-auto"
+              >
+                Get Your Loan Now
+                <Zap className="h-5 w-5 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              </Link>
+              <p className="flex items-center gap-1.5 text-xs text-foreground/60">
+                <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-success" />
+                Takes less than 2 min · No paperwork required
+              </p>
+            </div>
           </div>
         </div>
 

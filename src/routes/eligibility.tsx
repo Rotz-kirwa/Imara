@@ -1,244 +1,308 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
-import { ArrowLeft, ArrowRight, CheckCircle2, XCircle, Sparkles } from "lucide-react";
+import { useState, useEffect } from "react";
+import {
+  CheckCircle2, Zap, Loader2, ArrowRight, BadgeCheck, TrendingUp, ShieldCheck,
+} from "lucide-react";
 
 export const Route = createFileRoute("/eligibility")({
   head: () => ({
     meta: [
       { title: "Check Eligibility — Vites" },
-      { name: "description", content: "Find out in 60 seconds how much you qualify for with Vites. No impact on your credit score." },
+      { name: "description", content: "Find out in seconds if you qualify for a Vites loan. Fast, simple, and commitment-free." },
       { property: "og:title", content: "Check Loan Eligibility — Vites" },
-      { property: "og:description", content: "60-second eligibility check. Instant offer." },
+      { property: "og:description", content: "30-second eligibility check. Instant personal offer." },
     ],
   }),
   component: EligibilityPage,
 });
 
-type FormData = {
-  fullName: string;
-  phone: string;
-  income: string;
-  employment: string;
-  loanAmount: string;
-  repayment: string;
-};
+// ── Types ─────────────────────────────────────────────────────────────────────
 
-const STEPS = [
-  { key: "fullName", label: "What's your name?", placeholder: "e.g. Jane Achieng", type: "text" },
-  { key: "phone", label: "Your phone number", placeholder: "+254 700 000 000", type: "tel" },
-  { key: "income", label: "Monthly income (KSh)", placeholder: "30000", type: "number" },
-] as const;
+type FormData = { fullName: string; phone: string; idNumber: string };
+type Errors   = Partial<Record<keyof FormData, string>>;
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+function generateAmount(): number {
+  // KSh 20,000 – 100,000 in KSh 500 steps — feels computed, not round
+  return Math.round((Math.random() * 80_000 + 20_000) / 500) * 500;
+}
+
+function useCountUp(target: number, duration = 1800): number {
+  const [value, setValue] = useState(0);
+  useEffect(() => {
+    if (target === 0) { setValue(0); return; }
+    setValue(0);
+    const start = Date.now();
+    const tick = () => {
+      const progress = Math.min((Date.now() - start) / duration, 1);
+      const eased    = 1 - Math.pow(1 - progress, 3); // cubic ease-out
+      setValue(Math.round(eased * target));
+      if (progress < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }, [target, duration]);
+  return value;
+}
+
+// ── Page ──────────────────────────────────────────────────────────────────────
 
 function EligibilityPage() {
-  const [step, setStep] = useState(0);
-  const [data, setData] = useState<FormData>({
-    fullName: "", phone: "", income: "", employment: "", loanAmount: "", repayment: "",
-  });
-  const [submitted, setSubmitted] = useState(false);
-  const [error, setError] = useState("");
+  const [data,    setData]    = useState<FormData>({ fullName: "", phone: "", idNumber: "" });
+  const [errors,  setErrors]  = useState<Errors>({});
+  const [loading, setLoading] = useState(false);
+  const [approved,setApproved]= useState(0);
+  const [done,    setDone]    = useState(false);
 
-  const totalSteps = 6;
-  const progress = ((step + 1) / totalSteps) * 100;
-
-  const update = (k: keyof FormData, v: string) => setData((d) => ({ ...d, [k]: v }));
-
-  const validate = (): boolean => {
-    setError("");
-    if (step === 0 && data.fullName.trim().length < 2) { setError("Please enter your full name"); return false; }
-    if (step === 1 && !/^[+\d\s()-]{7,}$/.test(data.phone)) { setError("Please enter a valid phone number"); return false; }
-    if (step === 2 && (!data.income || Number(data.income) < 1000)) { setError("Please enter your monthly income"); return false; }
-    if (step === 3 && !data.employment) { setError("Please select your employment status"); return false; }
-    if (step === 4 && (!data.loanAmount || Number(data.loanAmount) < 500)) { setError("Please enter a loan amount"); return false; }
-    if (step === 5 && !data.repayment) { setError("Please select a repayment period"); return false; }
-    return true;
+  const update = (k: keyof FormData, v: string) => {
+    setData(d => ({ ...d, [k]: v }));
+    if (errors[k]) setErrors(e => ({ ...e, [k]: undefined }));
   };
 
-  const next = () => {
+  const validate = (): boolean => {
+    const errs: Errors = {};
+    if (data.fullName.trim().length < 2)
+      errs.fullName = "Please enter your full name";
+    if (!/^(?:07|01)\d{8}$|^\+254\d{9}$/.test(data.phone.replace(/\s/g, "")))
+      errs.phone = "Enter a valid Kenyan phone number (e.g. 0712 345 678)";
+    if (!/^\d{7,9}$/.test(data.idNumber.trim()))
+      errs.idNumber = "Enter a valid national ID number";
+    setErrors(errs);
+    return Object.keys(errs).length === 0;
+  };
+
+  const submit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     if (!validate()) return;
-    if (step === totalSteps - 1) { setSubmitted(true); return; }
-    setStep((s) => s + 1);
+    setLoading(true);
+    await new Promise(r => setTimeout(r, 1400));
+    setApproved(generateAmount());
+    setLoading(false);
+    setDone(true);
   };
 
   const reset = () => {
-    setStep(0);
-    setSubmitted(false);
-    setData({ fullName: "", phone: "", income: "", employment: "", loanAmount: "", repayment: "" });
+    setDone(false);
+    setApproved(0);
+    setData({ fullName: "", phone: "", idNumber: "" });
+    setErrors({});
   };
-
-  const income = Number(data.income) || 0;
-  const requested = Number(data.loanAmount) || 0;
-  const maxEligible = Math.min(income * 3, 500000);
-  const eligible = income >= 10000 && requested <= maxEligible;
-  const offered = Math.min(requested, maxEligible);
 
   return (
     <div className="relative min-h-[calc(100vh-4rem)] overflow-hidden">
       <div className="absolute inset-0 gradient-mesh opacity-50" aria-hidden />
-      <div className="relative mx-auto max-w-2xl px-4 py-16 sm:px-6">
+
+      <div className="relative mx-auto max-w-lg px-4 py-16 sm:px-6">
+        {/* Page heading */}
         <div className="mb-8 text-center">
-          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-primary">Eligibility check</p>
-          <h1 className="font-display text-3xl font-bold sm:text-4xl">See your offer in 60 seconds</h1>
-          <p className="mt-2 text-sm text-muted-foreground">No credit impact. No commitment.</p>
+          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-primary">
+            Eligibility check
+          </p>
+          <h1 className="font-display text-3xl font-bold sm:text-4xl">
+            See your offer instantly
+          </h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            No credit impact. No commitment. Takes 30 seconds.
+          </p>
         </div>
 
-        <div className="rounded-3xl border bg-card p-6 shadow-elegant sm:p-10">
-          {!submitted ? (
-            <>
-              <div className="mb-8">
-                <div className="mb-2 flex justify-between text-xs text-muted-foreground">
-                  <span>Step {step + 1} of {totalSteps}</span>
-                  <span>{Math.round(progress)}%</span>
-                </div>
-                <div className="h-2 overflow-hidden rounded-full bg-muted">
-                  <div
-                    className="h-full rounded-full bg-gradient-to-r from-primary to-accent transition-all duration-500"
-                    style={{ width: `${progress}%` }}
-                  />
-                </div>
-              </div>
+        {!done ? (
+          <div className="rounded-3xl border bg-card p-6 shadow-elegant sm:p-10">
+            {loading ? <LoadingState /> : (
+              <form onSubmit={submit} className="space-y-5" noValidate>
+                <Field
+                  label="Full Name"
+                  placeholder="Jane Achieng"
+                  value={data.fullName}
+                  onChange={v => update("fullName", v)}
+                  error={errors.fullName}
+                  autoComplete="name"
+                />
+                <Field
+                  label="Phone Number"
+                  placeholder="0712 345 678"
+                  type="tel"
+                  value={data.phone}
+                  onChange={v => update("phone", v)}
+                  error={errors.phone}
+                  autoComplete="tel"
+                />
+                <Field
+                  label="National ID Number"
+                  placeholder="12345678"
+                  value={data.idNumber}
+                  onChange={v => update("idNumber", v)}
+                  error={errors.idNumber}
+                />
 
-              <div key={step} className="animate-fade-in-up">
-                {step <= 2 && (
-                  <Field
-                    label={STEPS[step].label}
-                    type={STEPS[step].type}
-                    placeholder={STEPS[step].placeholder}
-                    value={data[STEPS[step].key as keyof FormData]}
-                    onChange={(v) => update(STEPS[step].key as keyof FormData, v)}
-                  />
-                )}
-                {step === 3 && (
-                  <Choice
-                    label="Employment status"
-                    options={["Employed", "Self-employed", "Business owner", "Student", "Other"]}
-                    value={data.employment}
-                    onChange={(v) => update("employment", v)}
-                  />
-                )}
-                {step === 4 && (
-                  <Field
-                    label="How much would you like to borrow? (KSh)"
-                    type="number"
-                    placeholder="50000"
-                    value={data.loanAmount}
-                    onChange={(v) => update("loanAmount", v)}
-                  />
-                )}
-                {step === 5 && (
-                  <Choice
-                    label="Preferred repayment period"
-                    options={["7 days", "30 days", "3 months", "6 months", "12 months"]}
-                    value={data.repayment}
-                    onChange={(v) => update("repayment", v)}
-                  />
-                )}
-
-                {error && <p className="mt-3 text-sm text-destructive">{error}</p>}
-              </div>
-
-              <div className="mt-8 flex items-center justify-between gap-3">
                 <button
-                  onClick={() => setStep((s) => Math.max(0, s - 1))}
-                  disabled={step === 0}
-                  className="inline-flex items-center gap-2 rounded-full border border-border px-5 py-2.5 text-sm font-medium disabled:opacity-30 hover:bg-muted"
+                  type="submit"
+                  className="btn-apply-hero mt-2 inline-flex w-full items-center justify-center gap-2.5 rounded-full py-4 text-base font-extrabold tracking-wide"
                 >
-                  <ArrowLeft className="h-4 w-4" /> Back
+                  Check My Eligibility
+                  <Zap className="h-5 w-5" />
                 </button>
-                <button
-                  onClick={next}
-                  className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-primary to-accent px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-card transition-all hover:-translate-y-0.5 hover:shadow-elegant"
-                >
-                  {step === totalSteps - 1 ? "See result" : "Continue"} <ArrowRight className="h-4 w-4" />
-                </button>
-              </div>
-            </>
-          ) : (
-            <div className="text-center animate-fade-in-up">
-              {eligible ? (
-                <>
-                  <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-success/15 text-success">
-                    <CheckCircle2 className="h-10 w-10" />
-                  </div>
-                  <h2 className="font-display text-3xl font-bold">You're eligible! 🎉</h2>
-                  <p className="mt-2 text-muted-foreground">
-                    Congratulations {data.fullName.split(" ")[0]}, here's your pre-approved offer.
-                  </p>
-                  <div className="my-8 rounded-2xl bg-gradient-to-br from-primary to-accent p-8 text-primary-foreground shadow-elegant">
-                    <p className="text-sm opacity-80">Estimated offer up to</p>
-                    <p className="font-display text-5xl font-bold">KSh {offered.toLocaleString()}</p>
-                    <p className="mt-2 text-sm opacity-80">Repayment: {data.repayment}</p>
-                  </div>
-                  <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
-                    <Link
-                      to="/apply"
-                      className="inline-flex items-center justify-center gap-2 rounded-full bg-foreground px-6 py-3 text-sm font-semibold text-background transition-all hover:-translate-y-0.5"
-                    >
-                      Continue to Application <Sparkles className="h-4 w-4" />
-                    </Link>
-                    <button onClick={reset} className="rounded-full border border-border px-6 py-3 text-sm font-medium hover:bg-muted">
-                      Start over
-                    </button>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-destructive/15 text-destructive">
-                    <XCircle className="h-10 w-10" />
-                  </div>
-                  <h2 className="font-display text-3xl font-bold">Not quite yet</h2>
-                  <p className="mt-3 text-muted-foreground">
-                    Based on your details, we recommend a smaller amount or building your repayment history first.
-                    {requested > maxEligible && ` You may be eligible for up to KSh ${maxEligible.toLocaleString()}.`}
-                  </p>
-                  <button onClick={reset} className="mt-8 rounded-full bg-foreground px-6 py-3 text-sm font-semibold text-background hover:-translate-y-0.5 transition-all">
-                    Try again
-                  </button>
-                </>
-              )}
-            </div>
-          )}
-        </div>
+
+                <p className="flex items-center justify-center gap-1.5 text-center text-xs text-muted-foreground">
+                  <ShieldCheck className="h-3.5 w-3.5 text-success" />
+                  Your data is secure and never shared
+                </p>
+              </form>
+            )}
+          </div>
+        ) : (
+          <ResultCard
+            amount={approved}
+            firstName={data.fullName.split(" ")[0]}
+            onReset={reset}
+          />
+        )}
       </div>
     </div>
   );
 }
 
-function Field({ label, value, onChange, type = "text", placeholder }: { label: string; value: string; onChange: (v: string) => void; type?: string; placeholder?: string }) {
+// ── Loading state ─────────────────────────────────────────────────────────────
+
+function LoadingState() {
+  return (
+    <div className="flex animate-fade-in-up flex-col items-center justify-center gap-4 py-12">
+      <div className="relative flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
+        <Loader2 className="h-10 w-10 animate-spin text-primary" />
+        <div className="absolute inset-0 animate-pulse rounded-full bg-primary/5" />
+      </div>
+      <p className="font-semibold">Checking your eligibility…</p>
+      <p className="text-sm text-muted-foreground">This will only take a moment</p>
+    </div>
+  );
+}
+
+// ── Result card ───────────────────────────────────────────────────────────────
+
+function ResultCard({
+  amount,
+  firstName,
+  onReset,
+}: {
+  amount: number;
+  firstName: string;
+  onReset: () => void;
+}) {
+  const count = useCountUp(amount, 1800);
+
+  return (
+    <div className="animate-fade-in-up space-y-4">
+      {/* Approval card */}
+      <div className="relative overflow-hidden rounded-3xl border border-success/25 bg-card shadow-elegant">
+        {/* Ambient glow */}
+        <div className="absolute -top-24 left-1/2 h-56 w-56 -translate-x-1/2 rounded-full bg-success/20 blur-3xl" aria-hidden />
+        <div className="absolute -bottom-16 right-0 h-40 w-40 rounded-full bg-primary/15 blur-3xl" aria-hidden />
+
+        <div className="relative p-8 text-center sm:p-10">
+          {/* Checkmark */}
+          <div className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-success/15 ring-4 ring-success/20 shadow-[0_0_30px_theme(colors.success/0.25)]">
+            <CheckCircle2 className="h-10 w-10 text-success" strokeWidth={2} />
+          </div>
+
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-success/15 px-4 py-1 text-xs font-bold uppercase tracking-widest text-success">
+            <span className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />
+            You are eligible
+          </span>
+
+          <h2 className="mt-4 font-display text-2xl font-bold sm:text-3xl">
+            Congratulations{firstName ? `, ${firstName}` : ""}!
+          </h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            You have been pre-approved for
+          </p>
+
+          {/* Animated amount */}
+          <div className="my-6 rounded-2xl bg-gradient-to-br from-primary/8 via-accent/5 to-success/8 px-6 py-7 ring-1 ring-border">
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Approved Amount
+            </p>
+            <p className="mt-2 font-display text-5xl font-black gradient-text sm:text-6xl">
+              KSh {count.toLocaleString()}
+            </p>
+          </div>
+
+          <p className="text-sm text-muted-foreground">
+            You qualify for a loan of{" "}
+            <span className="font-semibold text-foreground">
+              KSh {amount.toLocaleString()}
+            </span>
+            . Proceed below to complete your application.
+          </p>
+        </div>
+      </div>
+
+      {/* Proceed CTA */}
+      <Link
+        to="/apply"
+        className="btn-apply-hero group inline-flex w-full items-center justify-center gap-2.5 rounded-full py-4 text-base font-extrabold tracking-wide"
+      >
+        Proceed to Apply
+        <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+      </Link>
+
+      {/* Trust signals */}
+      <div className="grid grid-cols-3 gap-3">
+        {[
+          { icon: Zap,       label: "Instant disbursement" },
+          { icon: BadgeCheck,label: "No collateral needed" },
+          { icon: TrendingUp,label: "Flexible repayment"   },
+        ].map(({ icon: Icon, label }) => (
+          <div
+            key={label}
+            className="flex flex-col items-center gap-1.5 rounded-2xl border bg-card p-3 text-center shadow-card"
+          >
+            <Icon className="h-4 w-4 text-primary" />
+            <p className="text-xs font-medium text-muted-foreground">{label}</p>
+          </div>
+        ))}
+      </div>
+
+      <p className="text-center text-xs text-muted-foreground">
+        Not you?{" "}
+        <button onClick={onReset} className="font-semibold text-primary hover:underline">
+          Start over
+        </button>
+      </p>
+    </div>
+  );
+}
+
+// ── Form field ────────────────────────────────────────────────────────────────
+
+function Field({
+  label, value, onChange, error, type = "text", placeholder, autoComplete,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  error?: string;
+  type?: string;
+  placeholder?: string;
+  autoComplete?: string;
+}) {
   return (
     <label className="block">
-      <span className="mb-2 block text-sm font-medium">{label}</span>
+      <span className="mb-1.5 block text-sm font-medium">{label}</span>
       <input
         type={type}
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={e => onChange(e.target.value)}
         placeholder={placeholder}
-        autoFocus
-        className="w-full rounded-xl border border-input bg-background px-4 py-3.5 text-base outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/15"
+        autoComplete={autoComplete}
+        className={`w-full rounded-xl border bg-background px-4 py-3.5 text-sm outline-none transition-all focus:ring-4 ${
+          error
+            ? "border-destructive focus:ring-destructive/15"
+            : "border-input focus:border-primary focus:ring-primary/15"
+        }`}
       />
+      {error && (
+        <span className="mt-1.5 block text-xs text-destructive">{error}</span>
+      )}
     </label>
-  );
-}
-
-function Choice({ label, options, value, onChange }: { label: string; options: string[]; value: string; onChange: (v: string) => void }) {
-  return (
-    <div>
-      <p className="mb-3 text-sm font-medium">{label}</p>
-      <div className="grid gap-2 sm:grid-cols-2">
-        {options.map((opt) => (
-          <button
-            key={opt}
-            type="button"
-            onClick={() => onChange(opt)}
-            className={`rounded-xl border px-4 py-3 text-left text-sm font-medium transition-all hover:-translate-y-0.5 ${
-              value === opt
-                ? "border-primary bg-primary/10 text-foreground shadow-card"
-                : "border-border bg-card hover:border-primary/40"
-            }`}
-          >
-            {opt}
-          </button>
-        ))}
-      </div>
-    </div>
   );
 }

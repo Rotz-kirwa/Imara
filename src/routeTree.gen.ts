@@ -13,6 +13,7 @@ import { Route as FaqRouteImport } from './routes/faq'
 import { Route as EligibilityRouteImport } from './routes/eligibility'
 import { Route as ApplyRouteImport } from './routes/apply'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiMpesaCallbackRouteImport } from './routes/api/mpesa/callback'
 
 const FaqRoute = FaqRouteImport.update({
   id: '/faq',
@@ -34,18 +35,25 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiMpesaCallbackRoute = ApiMpesaCallbackRouteImport.update({
+  id: '/api/mpesa/callback',
+  path: '/api/mpesa/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/apply': typeof ApplyRoute
   '/eligibility': typeof EligibilityRoute
   '/faq': typeof FaqRoute
+  '/api/mpesa/callback': typeof ApiMpesaCallbackRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/apply': typeof ApplyRoute
   '/eligibility': typeof EligibilityRoute
   '/faq': typeof FaqRoute
+  '/api/mpesa/callback': typeof ApiMpesaCallbackRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -53,13 +61,20 @@ export interface FileRoutesById {
   '/apply': typeof ApplyRoute
   '/eligibility': typeof EligibilityRoute
   '/faq': typeof FaqRoute
+  '/api/mpesa/callback': typeof ApiMpesaCallbackRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/apply' | '/eligibility' | '/faq'
+  fullPaths: '/' | '/apply' | '/eligibility' | '/faq' | '/api/mpesa/callback'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/apply' | '/eligibility' | '/faq'
-  id: '__root__' | '/' | '/apply' | '/eligibility' | '/faq'
+  to: '/' | '/apply' | '/eligibility' | '/faq' | '/api/mpesa/callback'
+  id:
+    | '__root__'
+    | '/'
+    | '/apply'
+    | '/eligibility'
+    | '/faq'
+    | '/api/mpesa/callback'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -67,6 +82,7 @@ export interface RootRouteChildren {
   ApplyRoute: typeof ApplyRoute
   EligibilityRoute: typeof EligibilityRoute
   FaqRoute: typeof FaqRoute
+  ApiMpesaCallbackRoute: typeof ApiMpesaCallbackRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -99,6 +115,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/mpesa/callback': {
+      id: '/api/mpesa/callback'
+      path: '/api/mpesa/callback'
+      fullPath: '/api/mpesa/callback'
+      preLoaderRoute: typeof ApiMpesaCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -107,6 +130,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApplyRoute: ApplyRoute,
   EligibilityRoute: EligibilityRoute,
   FaqRoute: FaqRoute,
+  ApiMpesaCallbackRoute: ApiMpesaCallbackRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

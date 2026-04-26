@@ -207,3 +207,130 @@
 }
 .animate-float { animation: float 6s ease-in-out infinite; }
 .animate-fade-in-up { animation: fade-in-up 0.7s var(--transition-smooth) both; }
+
+@keyframes btn-shine {
+  0%        { left: -80%;  opacity: 0; }
+  10%       { opacity: 1; }
+  50%, 100% { left: 130%; opacity: 0; }
+}
+
+.btn-apply {
+  position: relative;
+  overflow: hidden;
+  color: white;
+  background: linear-gradient(
+    110deg,
+    oklch(0.46 0.28 268),
+    oklch(0.60 0.27 288),
+    oklch(0.72 0.23 312)
+  );
+  box-shadow:
+    0 0 0 1px oklch(0.62 0.25 288 / 45%),
+    0 4px 18px oklch(0.52 0.24 268 / 50%),
+    0 0 1px 0 oklch(1 0 0 / 30%) inset,
+    0 1px 0 0 oklch(1 0 0 / 22%) inset;
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+
+/* sweeping shine */
+.btn-apply::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  left: -80%;
+  width: 55%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    oklch(1 0 0 / 32%) 50%,
+    transparent 100%
+  );
+  animation: btn-shine 2.6s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.btn-apply:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 0 0 1px oklch(0.68 0.24 290 / 55%),
+    0 8px 30px oklch(0.52 0.24 268 / 60%),
+    0 0 55px oklch(0.65 0.24 290 / 28%),
+    0 0 1px 0 oklch(1 0 0 / 35%) inset,
+    0 1px 0 0 oklch(1 0 0 / 28%) inset;
+}
+
+@keyframes ticker {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.animate-ticker {
+  animation: ticker 55s linear infinite;
+  will-change: transform;
+}
+/* pause on hover (desktop) */
+.ticker-container:hover .animate-ticker {
+  animation-play-state: paused;
+}
+
+/* ── Hero CTA button ─────────────────────────────────────────────── */
+.btn-apply-hero {
+  position: relative;
+  overflow: hidden;
+  color: white;
+  background: linear-gradient(
+    115deg,
+    oklch(0.36 0.30 252),
+    oklch(0.48 0.32 265),
+    oklch(0.60 0.29 282),
+    oklch(0.68 0.24 308)
+  );
+  box-shadow:
+    0 0 0 1.5px oklch(0.52 0.31 268 / 50%),
+    0 6px 28px oklch(0.40 0.30 258 / 58%),
+    0 16px 50px oklch(0.52 0.28 275 / 32%),
+    0 1px 0 0 oklch(1 0 0 / 32%) inset,
+    0 -1px 0 0 oklch(0 0 0 / 18%) inset;
+  transition:
+    transform 0.28s cubic-bezier(0.34, 1.5, 0.64, 1),
+    box-shadow 0.28s ease,
+    filter 0.28s ease;
+}
+
+/* sweeping shine — reuses @keyframes btn-shine */
+.btn-apply-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  left: -85%;
+  width: 65%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    oklch(1 0 0 / 42%) 50%,
+    transparent 100%
+  );
+  animation: btn-shine 2.4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.btn-apply-hero:hover {
+  transform: scale(1.05) translateY(-3px);
+  filter: brightness(1.12) saturate(1.12);
+  box-shadow:
+    0 0 0 1.5px oklch(0.60 0.28 278 / 60%),
+    0 10px 40px oklch(0.40 0.30 258 / 68%),
+    0 22px 70px oklch(0.52 0.28 275 / 40%),
+    0 0 80px oklch(0.58 0.26 285 / 28%),
+    0 1px 0 0 oklch(1 0 0 / 40%) inset,
+    0 -1px 0 0 oklch(0 0 0 / 15%) inset;
+}
+
+.btn-apply-hero:active {
+  transform: scale(0.96) translateY(1px);
+  transition-duration: 0.09s;
+  filter: brightness(0.93);
+  box-shadow:
+    0 0 0 1px oklch(0.52 0.31 268 / 35%),
+    0 3px 14px oklch(0.40 0.30 258 / 42%),
+    0 1px 0 0 oklch(1 0 0 / 22%) inset;
+}

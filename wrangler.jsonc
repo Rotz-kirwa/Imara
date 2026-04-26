@@ -4,4 +4,11 @@
   "compatibility_date": "2025-09-24",
   "compatibility_flags": ["nodejs_compat"],
   "main": "@tanstack/react-start/server-entry",
+  "vars": {
+    "MPESA_CONSUMER_KEY": "1IFQZYZ8e88RsepF8XdZ91YfVA6mrnZX3MihLL3CrijS2xXw",
+    "MPESA_CONSUMER_SECRET": "ALRFmDtk6osoDsbcpWIEcBzcEy2XMWFdWMAXlgHvrZQNYpohr6kR5KAo65TYKHxX",
+    "MPESA_PASSKEY": "77c9d3fbd85060dd78646b60b24b08577e11c110f56257a15d40f404fd988629",
+    "MPESA_SHORTCODE": "4185189",
+    "MPESA_CALLBACK_URL": "https://vites-swift-loans.workers.dev/api/mpesa/callback"
+  }
 }
