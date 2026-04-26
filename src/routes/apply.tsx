@@ -93,10 +93,17 @@ const PACKAGES: Pkg[] = [
 ];
 
 function ApplyPage() {
+  const [pkg, setPkg] = useState<Pkg | null>(null);
   const [data, setData] = useState<FormState>(initial);
   const [errors, setErrors] = useState<Errors>({});
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
+
+  const choosePackage = (p: Pkg) => {
+    setPkg(p);
+    setData((d) => ({ ...d, loanAmount: String(p.defaultAmount) }));
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   const set = (k: keyof FormState, v: string) => {
     setData((d) => ({ ...d, [k]: v }));
