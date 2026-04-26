@@ -35,10 +35,24 @@ function HomePage() {
 function Hero() {
   return (
     <section className="relative overflow-hidden">
-      <div className="absolute inset-0 gradient-mesh opacity-60" aria-hidden />
-      <div className="mx-auto grid max-w-7xl gap-12 px-4 pt-12 pb-16 sm:px-6 lg:grid-cols-2 lg:gap-8 lg:px-8 lg:pt-20 lg:pb-28">
-        <div className="relative z-10 flex flex-col justify-center animate-fade-in-up">
-          <div className="mb-6 inline-flex w-fit items-center gap-2 rounded-full border border-border bg-card/60 px-4 py-1.5 text-xs font-medium text-muted-foreground backdrop-blur">
+      {/* Full-bleed background image */}
+      <div className="absolute inset-0">
+        <img
+          src={heroImg}
+          alt="Happy young woman in Nairobi smiling at her phone after receiving a Vites loan"
+          className="h-full w-full object-cover"
+          width={1600}
+          height={1200}
+        />
+        {/* Layered overlays for legibility */}
+        <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/70 to-background/20 lg:from-background/90 lg:via-background/55 lg:to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 via-transparent to-accent/15" />
+      </div>
+
+      <div className="relative mx-auto max-w-7xl px-4 pt-16 pb-24 sm:px-6 lg:px-8 lg:pt-28 lg:pb-40">
+        <div className="max-w-2xl animate-fade-in-up">
+          <div className="mb-6 inline-flex w-fit items-center gap-2 rounded-full border border-border bg-card/70 px-4 py-1.5 text-xs font-medium text-foreground backdrop-blur">
             <span className="flex h-2 w-2 rounded-full bg-success animate-pulse" />
             Trusted by 50,000+ Africans
           </div>
@@ -48,7 +62,7 @@ function Hero() {
             <span className="gradient-text">Straight to Your Phone</span>
           </h1>
 
-          <p className="mt-6 max-w-xl text-lg text-muted-foreground">
+          <p className="mt-6 max-w-xl text-lg text-foreground/80">
             Vites delivers fast, secure mobile loans built around your life.
             Approval in seconds. Funds in minutes. Zero paperwork.
           </p>
@@ -56,7 +70,7 @@ function Hero() {
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Link
               to="/eligibility"
-              className="group inline-flex items-center justify-center gap-2 rounded-full border border-border bg-card px-6 py-3.5 text-sm font-semibold shadow-card transition-all hover:-translate-y-0.5 hover:shadow-elegant"
+              className="group inline-flex items-center justify-center gap-2 rounded-full border border-border bg-card/80 px-6 py-3.5 text-sm font-semibold backdrop-blur shadow-card transition-all hover:-translate-y-0.5 hover:shadow-elegant hover:bg-card"
             >
               Check Eligibility
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -70,7 +84,7 @@ function Hero() {
             </Link>
           </div>
 
-          <div className="mt-10 flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
+          <div className="mt-10 flex flex-wrap items-center gap-6 text-sm text-foreground/80">
             <div className="flex items-center gap-2">
               <BadgeCheck className="h-5 w-5 text-success" />
               Licensed & regulated
@@ -82,41 +96,27 @@ function Hero() {
           </div>
         </div>
 
-        <div className="relative">
-          <div className="relative aspect-[4/5] overflow-hidden rounded-3xl shadow-elegant lg:aspect-[4/5]">
-            <img
-              src={heroImg}
-              alt="Happy young woman in Nairobi smiling at her phone after receiving a Vites loan"
-              className="h-full w-full object-cover"
-              width={1600}
-              height={1200}
-            />
-            <div className="absolute inset-0 bg-gradient-to-tr from-primary/30 via-transparent to-transparent" />
-            <div className="absolute inset-0 bg-gradient-to-t from-background/40 via-transparent to-transparent" />
-          </div>
-
-          {/* Floating cards */}
-          <div className="absolute -left-4 top-10 hidden animate-float rounded-2xl glass p-4 shadow-card sm:block">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-success/20 text-success">
-                <CheckCircle2 className="h-5 w-5" />
-              </div>
-              <div>
-                <p className="text-xs text-muted-foreground">Approved</p>
-                <p className="text-sm font-semibold">KSh 50,000</p>
-              </div>
+        {/* Floating cards */}
+        <div className="absolute left-4 bottom-8 animate-float rounded-2xl glass p-4 shadow-card sm:left-auto sm:right-8 sm:bottom-16 lg:right-16">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-success/20 text-success">
+              <CheckCircle2 className="h-5 w-5" />
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground">Approved</p>
+              <p className="text-sm font-semibold">KSh 50,000</p>
             </div>
           </div>
+        </div>
 
-          <div className="absolute -right-4 bottom-10 hidden animate-float rounded-2xl glass p-4 shadow-card sm:block" style={{ animationDelay: "1.5s" }}>
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/20 text-primary">
-                <Zap className="h-5 w-5" />
-              </div>
-              <div>
-                <p className="text-xs text-muted-foreground">Funded in</p>
-                <p className="text-sm font-semibold">2 minutes</p>
-              </div>
+        <div className="absolute right-4 top-8 hidden animate-float rounded-2xl glass p-4 shadow-card sm:block lg:top-16" style={{ animationDelay: "1.5s" }}>
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/20 text-primary">
+              <Zap className="h-5 w-5" />
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground">Funded in</p>
+              <p className="text-sm font-semibold">2 minutes</p>
             </div>
           </div>
         </div>
