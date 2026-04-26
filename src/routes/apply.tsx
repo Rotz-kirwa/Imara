@@ -36,6 +36,62 @@ const initial: FormState = {
   employment: "", income: "", loanAmount: "", repayment: "", purpose: "",
 };
 
+type Pkg = {
+  id: string;
+  name: string;
+  range: string;
+  min: number;
+  max: number;
+  defaultAmount: number;
+  rate: string;
+  term: string;
+  perks: string[];
+  icon: typeof Zap;
+  gradient: string;
+  ring: string;
+  badge?: string;
+};
+
+const PACKAGES: Pkg[] = [
+  {
+    id: "starter",
+    name: "Quick Boost",
+    range: "KSh 10,000 – 50,000",
+    min: 10000, max: 50000, defaultAmount: 25000,
+    rate: "From 4% / month",
+    term: "1 – 3 months",
+    perks: ["Instant disbursement", "No collateral", "Mobile-money payout"],
+    icon: Zap,
+    gradient: "from-amber-400 via-orange-500 to-pink-500",
+    ring: "ring-amber-400",
+  },
+  {
+    id: "growth",
+    name: "Growth Plan",
+    range: "KSh 51,000 – 100,000",
+    min: 51000, max: 100000, defaultAmount: 75000,
+    rate: "From 3% / month",
+    term: "3 – 6 months",
+    perks: ["Lower interest rate", "Flexible repayment", "Priority approval"],
+    icon: Rocket,
+    gradient: "from-violet-500 via-indigo-500 to-blue-500",
+    ring: "ring-indigo-400",
+    badge: "Most popular",
+  },
+  {
+    id: "premium",
+    name: "Premium Capital",
+    range: "KSh 101,000 – 1,000,000",
+    min: 101000, max: 1000000, defaultAmount: 250000,
+    rate: "From 2% / month",
+    term: "6 – 12 months",
+    perks: ["Best rates", "Dedicated agent", "Up to 12-month term"],
+    icon: Crown,
+    gradient: "from-emerald-400 via-teal-500 to-cyan-500",
+    ring: "ring-teal-400",
+  },
+];
+
 function ApplyPage() {
   const [data, setData] = useState<FormState>(initial);
   const [errors, setErrors] = useState<Errors>({});
