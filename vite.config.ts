@@ -11,7 +11,10 @@ export default defineConfig(({ command }) => ({
     tailwindcss(),
     tanstackStart(),
     viteReact(),
-    ...(command === "build" ? [cloudflare({ viteEnvironment: { name: "ssr" } })] : []),
+    // Cloudflare plugin only for Cloudflare Workers builds, not Vercel
+    ...(command === "build" && !process.env.VERCEL
+      ? [cloudflare({ viteEnvironment: { name: "ssr" } })]
+      : []),
   ],
   resolve: {
     alias: { "@": `${process.cwd()}/src` },
