@@ -45,9 +45,9 @@ function Hero() {
           height={1200}
         />
         {/* Layered overlays for legibility */}
-        <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/70 to-background/20 lg:from-background/90 lg:via-background/55 lg:to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 via-transparent to-accent/15" />
+        <div className="absolute inset-0 bg-gradient-to-r from-background/70 via-background/30 to-transparent lg:from-background/60 lg:via-background/15" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background/40 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-tr from-primary/15 via-transparent to-accent/10" />
       </div>
 
       <div className="relative mx-auto max-w-7xl px-4 pt-16 pb-24 sm:px-6 lg:px-8 lg:pt-28 lg:pb-40">
