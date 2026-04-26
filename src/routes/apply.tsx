@@ -23,7 +23,7 @@ const schema = z.object({
   location: z.string().trim().min(2, "Location is required").max(100),
   employment: z.string().min(1, "Select employment status"),
   income: z.coerce.number().min(1000, "Enter your monthly income"),
-  loanAmount: z.coerce.number().min(500, "Enter loan amount").max(500000),
+  loanAmount: z.coerce.number().min(500, "Enter loan amount").max(1000000),
   repayment: z.string().min(1, "Select repayment period"),
   purpose: z.string().trim().min(3, "Please describe purpose").max(500),
 });
