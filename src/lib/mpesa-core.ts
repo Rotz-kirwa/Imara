@@ -32,6 +32,10 @@ export async function getToken(key: string, secret: string): Promise<string> {
     `${MPESA_BASE}/oauth/v1/generate?grant_type=client_credentials`,
     { headers: { Authorization: `Basic ${btoa(`${key}:${secret}`)}` } },
   );
+  console.log("M-Pesa OAuth", {
+    environment: process.env.MPESA_ENV === "production" ? "production" : "sandbox",
+    status: res.status,
+  });
   if (!res.ok) {
     const body = await res.text().catch(() => "");
     throw new Error(`OAuth failed (${res.status}): ${body.slice(0, 200)}`);
@@ -45,6 +49,13 @@ export async function initiateStkPush(
   reference: string,
   env: { key: string; secret: string; passkey: string; shortcode: string; callbackUrl: string },
 ): Promise<{ checkoutRequestId: string; merchantRequestId: string }> {
+  console.log("M-Pesa STK request", {
+    environment: process.env.MPESA_ENV === "production" ? "production" : "sandbox",
+    shortcode: env.shortcode,
+    callbackUrl: env.callbackUrl,
+    reference,
+  });
+
   const token = await getToken(env.key, env.secret);
   const ts    = timestamp();
   const pwd   = mkPassword(env.shortcode, env.passkey, ts);
@@ -67,7 +78,15 @@ export async function initiateStkPush(
     }),
   });
 
-  let json: { ResponseCode: string; ResponseDescription: string; MerchantRequestID: string; CheckoutRequestID: string };
+  let json: {
+    ResponseCode?: string;
+    ResponseDescription?: string;
+    MerchantRequestID?: string;
+    CheckoutRequestID?: string;
+    errorCode?: string;
+    errorMessage?: string;
+    requestId?: string;
+  };
   try {
     json = await res.json() as typeof json;
   } catch {
@@ -75,11 +94,23 @@ export async function initiateStkPush(
     throw new Error(`Daraja returned non-JSON (HTTP ${res.status}): ${text.slice(0, 200)}`);
   }
 
+  console.log("M-Pesa STK response", {
+    httpStatus: res.status,
+    responseCode: json.ResponseCode,
+    errorCode: json.errorCode,
+    errorMessage: json.errorMessage,
+    requestId: json.requestId,
+  });
+
+  if (json.errorCode) {
+    throw new Error(json.errorMessage ?? `M-Pesa request failed (${json.errorCode}).`);
+  }
+
   if (json.ResponseCode !== "0") {
     throw new Error(`[${json.ResponseCode}] ${json.ResponseDescription || JSON.stringify(json)}`);
   }
 
-  return { checkoutRequestId: json.CheckoutRequestID, merchantRequestId: json.MerchantRequestID };
+  return { checkoutRequestId: json.CheckoutRequestID ?? "", merchantRequestId: json.MerchantRequestID ?? "" };
 }
 
 export async function queryStkStatus(
