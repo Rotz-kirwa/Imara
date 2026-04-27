@@ -14,6 +14,19 @@ const corsHeaders = () => ({
   "Access-Control-Max-Age": "86400",
 });
 
+function withCors(response: Response) {
+  const headers = new Headers(response.headers);
+  for (const [key, value] of Object.entries(corsHeaders())) {
+    headers.set(key, value);
+  }
+
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
+
 // Manual CORS — runs before every request including OPTIONS preflight
 app.use("*", async (c, next) => {
   const headers = corsHeaders();
@@ -31,7 +44,7 @@ app.use("*", async (c, next) => {
 
 // Wrap existing Fetch-API handlers — no code duplication
 function mount(handler: (req: Request) => Promise<Response>) {
-  return async (c: { req: { raw: Request } }) => handler(c.req.raw);
+  return async (c: { req: { raw: Request } }) => withCors(await handler(c.req.raw));
 }
 
 app.post("/api/mpesa/stk",          mount(stkHandler));
