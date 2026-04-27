@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect, useRef } from "react";
 import { z } from "zod";
-import { saveLoanApplication } from "@/lib/applications";
 import {
   CheckCircle2, Sparkles, Loader2, Zap,
   Smartphone, Shield,
@@ -117,26 +116,20 @@ function ApplyPage() {
       const errs: Errors = {};
       result.error.issues.forEach(i => { errs[i.path[0] as keyof FormState] = i.message; });
       setErrors(errs);
-      const first = document.querySelector<HTMLElement>("[data-field]");
-      first?.scrollIntoView({ behavior: "smooth", block: "center" });
+      document.querySelector<HTMLElement>("[data-field]")?.scrollIntoView({ behavior: "smooth", block: "center" });
       return;
     }
     setLoading(true);
-    try {
-      await saveLoanApplication({
-        data: {
-          reference: refNum,
-          ...data,
-        },
-      });
-      setPaymentPhone(data.phone);
-      setPaymentPhase("notice");
-      setDone(true);
-    } catch {
-      setErrors({ phone: "We could not save your application. Please try again." });
-    } finally {
-      setLoading(false);
-    }
+    // Fire-and-forget — don't block the payment flow if DB save fails
+    fetch("/api/applications/save", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ reference: refNum, ...data }),
+    }).catch(() => {});
+    setPaymentPhone(data.phone);
+    setPaymentPhase("notice");
+    setDone(true);
+    setLoading(false);
   };
 
   // ── Post-submission payment flow ─────────────────────────────────────────────

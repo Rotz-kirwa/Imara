@@ -18,7 +18,11 @@ export default defineConfig(({ command }) => ({
          ...(command === "build" ? [cloudflare({ viteEnvironment: { name: "ssr" } })] : [])]),
   ],
   resolve: {
-    alias: { "@": `${process.cwd()}/src` },
+    alias: {
+      "@": `${process.cwd()}/src`,
+      // Stub Node.js-only built-ins so server-side imports don't break the browser bundle
+      ...(process.env.VERCEL ? { "node:async_hooks": `${process.cwd()}/src/stubs/node-async-hooks.ts` } : {}),
+    },
     dedupe: [
       "react",
       "react-dom",
