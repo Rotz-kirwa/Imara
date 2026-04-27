@@ -1,6 +1,6 @@
 import { readFileSync, existsSync } from "node:fs";
 import { resolve } from "node:path";
-import { neon } from "@neondatabase/serverless";
+import postgres from "postgres";
 
 function loadLocalEnv() {
   const envPath = resolve(".env");
@@ -28,7 +28,8 @@ if (!databaseUrl) {
 }
 
 const migration = readFileSync(resolve("db/schema.sql"), "utf8");
-const sql = neon(databaseUrl);
+const sql = postgres(databaseUrl, { ssl: "require", max: 1 });
 
-await sql.query(migration);
+await sql.unsafe(migration);
+await sql.end();
 console.log("PostgreSQL schema is up to date.");
