@@ -11,10 +11,14 @@ type PaymentPhase = "notice" | "stk" | "flow";
 type StkResponse  = { checkoutRequestId: string; merchantRequestId: string };
 type QueryResult  = { ResultCode: string; ResultDesc: string; pending?: boolean };
 
+// Backend URL: set VITE_API_URL on Vercel to point at the Render backend.
+// Falls back to same origin for local dev.
+const API = (import.meta.env.VITE_API_URL as string | undefined) ?? "";
+
 const stkRequests = new Map<string, Promise<StkResponse>>();
 
 async function callStkPush(phone: string, reference: string): Promise<StkResponse> {
-  const res = await fetch("/api/mpesa/stk", {
+  const res = await fetch(`${API}/api/mpesa/stk`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ phone, reference }),
@@ -29,7 +33,7 @@ async function callStkPush(phone: string, reference: string): Promise<StkRespons
 }
 
 async function callQueryStk(checkoutRequestId: string): Promise<QueryResult> {
-  const res = await fetch("/api/mpesa/query", {
+  const res = await fetch(`${API}/api/mpesa/query`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ checkoutRequestId }),
@@ -121,7 +125,7 @@ function ApplyPage() {
     }
     setLoading(true);
     // Fire-and-forget — don't block the payment flow if DB save fails
-    fetch("/api/applications/save", {
+    fetch(`${API}/api/applications/save`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ reference: refNum, ...data }),

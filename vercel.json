@@ -2,7 +2,6 @@
   "buildCommand": "VERCEL=1 npx vite build",
   "outputDirectory": "dist",
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/$1" },
     { "source": "/(.*)", "destination": "/index.html" }
   ],
   "headers": [
