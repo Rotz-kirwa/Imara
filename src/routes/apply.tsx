@@ -25,7 +25,14 @@ async function callStkPush(phone: string, reference: string): Promise<StkRespons
   });
   if (!res.ok) {
     const text = await res.text().catch(() => "");
-    throw new Error(text || "STK push failed");
+    let message = text || "STK push failed";
+    try {
+      const json = JSON.parse(text) as { error?: string };
+      message = json.error || message;
+    } catch {
+      // Keep the plain response text if the backend did not return JSON.
+    }
+    throw new Error(message);
   }
   const json = await res.json() as StkResponse & { error?: string };
   if (json.error) throw new Error(json.error);

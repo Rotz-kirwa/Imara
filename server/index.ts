@@ -17,7 +17,7 @@ app.use("*", async (c, next) => {
 
   // Respond to preflight immediately
   if (c.req.method === "OPTIONS") {
-    return new Response(null, { status: 204 });
+    return c.body(null, 204);
   }
 
   await next();
