@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Sparkles, Twitter, Facebook, Instagram, Linkedin } from "lucide-react";
+import { Sparkles } from "lucide-react";
 
 export function Footer() {
   return (
@@ -11,20 +11,25 @@ export function Footer() {
               <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-accent text-primary-foreground shadow-card">
                 <Sparkles className="h-5 w-5" />
               </span>
-              <span className="gradient-text">Vites</span>
+              <span className="gradient-text">Apex Finance</span>
             </Link>
             <p className="mt-4 max-w-sm text-sm text-muted-foreground">
               Instant mobile loans designed for the modern African. Fast, secure, and built around your life.
             </p>
             <div className="mt-6 flex gap-3">
-              {[Twitter, Facebook, Instagram, Linkedin].map((Icon, i) => (
+              {[
+                { label: "X", href: "#" },
+                { label: "FB", href: "#" },
+                { label: "IG", href: "#" },
+                { label: "in", href: "#" },
+              ].map((s) => (
                 <a
-                  key={i}
-                  href="#"
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-border text-muted-foreground transition-all hover:border-primary hover:text-primary hover:-translate-y-0.5"
-                  aria-label="Social link"
+                  key={s.label}
+                  href={s.href}
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-border text-xs font-bold text-muted-foreground transition-all hover:border-primary hover:text-primary hover:-translate-y-0.5"
+                  aria-label={s.label}
                 >
-                  <Icon className="h-4 w-4" />
+                  {s.label}
                 </a>
               ))}
             </div>
@@ -42,7 +47,7 @@ export function Footer() {
           <div>
             <h4 className="mb-4 text-sm font-semibold">Company</h4>
             <ul className="space-y-3 text-sm text-muted-foreground">
-              <li><a href="#" className="hover:text-foreground">About</a></li>
+              <li><Link to="/about" className="hover:text-foreground">About Us</Link></li>
               <li><a href="#" className="hover:text-foreground">Privacy</a></li>
               <li><a href="#" className="hover:text-foreground">Terms</a></li>
               <li><a href="#" className="hover:text-foreground">Contact</a></li>
@@ -51,7 +56,7 @@ export function Footer() {
         </div>
 
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t pt-8 text-sm text-muted-foreground sm:flex-row">
-          <p>© {new Date().getFullYear()} Vites. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Apex Finance. All rights reserved.</p>
           <p>Built with ❤️ for Africa</p>
         </div>
       </div>

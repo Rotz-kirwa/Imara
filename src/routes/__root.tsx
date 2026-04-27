@@ -27,9 +27,9 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Vites — Instant Loans Straight to Your Phone" },
-      { name: "description", content: "Get fast, secure mobile loans with Vites. Check eligibility in seconds and receive funds directly to your phone." },
-      { property: "og:title", content: "Vites — Instant Mobile Loans" },
+      { title: "Apex Finance — Instant Loans Straight to Your Phone" },
+      { name: "description", content: "Get fast, secure mobile loans with Apex Finance. Check eligibility in seconds and receive funds directly to your phone." },
+      { property: "og:title", content: "Apex Finance — Instant Mobile Loans" },
       { property: "og:description", content: "Fast approval. Flexible repayment. Money in your phone in minutes." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

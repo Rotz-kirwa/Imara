@@ -67,9 +67,9 @@ function getStkRequest(phone: string, reference: string, forceNew = false) {
 export const Route = createFileRoute("/apply")({
   head: () => ({
     meta: [
-      { title: "Apply for a Loan — Vites" },
-      { name: "description", content: "Complete your Vites loan application in minutes. Funds disbursed to your mobile wallet upon approval." },
-      { property: "og:title", content: "Apply for a Loan — Vites" },
+      { title: "Apply for a Loan — Apex Finance" },
+      { name: "description", content: "Complete your Apex Finance loan application in minutes. Funds disbursed to your mobile wallet upon approval." },
+      { property: "og:title", content: "Apply for a Loan — Apex Finance" },
       { property: "og:description", content: "Quick application. Fast funding." },
     ],
   }),
@@ -113,7 +113,7 @@ function ApplyPage() {
   const [paymentPhase, setPaymentPhase] = useState<PaymentPhase>("notice");
   const [paymentPhone, setPaymentPhone] = useState("");
   const [phoneError,   setPhoneError]   = useState("");
-  const [refNum]                        = useState(() => `VTS-${Date.now().toString().slice(-8)}`);
+  const [refNum]                        = useState(() => `APX-${Date.now().toString().slice(-8)}`);
 
   const set = (k: keyof FormState, v: string) => {
     setData(d => ({ ...d, [k]: v }));
@@ -381,7 +381,7 @@ function ApplyPage() {
             </button>
 
             <p className="text-center text-xs text-muted-foreground">
-              By submitting, you agree to our Terms and authorize Vites to assess your application.
+              By submitting, you agree to our Terms and authorize Apex Finance to assess your application.
             </p>
           </form>
         </div>

@@ -9,12 +9,18 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as AboutRouteImport } from './routes/about'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as EligibilityRouteImport } from './routes/eligibility'
 import { Route as ApplyRouteImport } from './routes/apply'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiMpesaCallbackRouteImport } from './routes/api/mpesa/callback'
 
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FaqRoute = FaqRouteImport.update({
   id: '/faq',
   path: '/faq',
@@ -43,6 +49,7 @@ const ApiMpesaCallbackRoute = ApiMpesaCallbackRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/apply': typeof ApplyRoute
   '/eligibility': typeof EligibilityRoute
   '/faq': typeof FaqRoute
@@ -50,6 +57,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/apply': typeof ApplyRoute
   '/eligibility': typeof EligibilityRoute
   '/faq': typeof FaqRoute
@@ -58,6 +66,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/apply': typeof ApplyRoute
   '/eligibility': typeof EligibilityRoute
   '/faq': typeof FaqRoute
@@ -65,12 +74,13 @@ export interface FileRoutesById {
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/apply' | '/eligibility' | '/faq' | '/api/mpesa/callback'
+  fullPaths: '/' | '/about' | '/apply' | '/eligibility' | '/faq' | '/api/mpesa/callback'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/apply' | '/eligibility' | '/faq' | '/api/mpesa/callback'
+  to: '/' | '/about' | '/apply' | '/eligibility' | '/faq' | '/api/mpesa/callback'
   id:
     | '__root__'
     | '/'
+    | '/about'
     | '/apply'
     | '/eligibility'
     | '/faq'
@@ -79,6 +89,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AboutRoute: typeof AboutRoute
   ApplyRoute: typeof ApplyRoute
   EligibilityRoute: typeof EligibilityRoute
   FaqRoute: typeof FaqRoute
@@ -87,6 +98,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/faq': {
       id: '/faq'
       path: '/faq'
@@ -127,6 +145,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AboutRoute: AboutRoute,
   ApplyRoute: ApplyRoute,
   EligibilityRoute: EligibilityRoute,
   FaqRoute: FaqRoute,

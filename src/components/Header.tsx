@@ -7,6 +7,7 @@ const navItems = [
   { to: "/eligibility", label: "Eligibility" },
   { to: "/apply", label: "Apply" },
   { to: "/faq", label: "FAQ" },
+  { to: "/about", label: "About" },
 ] as const;
 
 export function Header() {
@@ -20,7 +21,7 @@ export function Header() {
             <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-accent text-primary-foreground shadow-card">
               <Sparkles className="h-5 w-5" />
             </span>
-            <span className="gradient-text">Vites</span>
+            <span className="gradient-text">Apex Finance</span>
           </Link>
 
           <nav className="hidden items-center gap-8 md:flex">

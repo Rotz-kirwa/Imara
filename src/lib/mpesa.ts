@@ -89,7 +89,7 @@ export const stkPush = createServerFn({ method: "POST" })
           PhoneNumber: formatPhone(phone),
           CallBackURL: CALLBACK_URL,
           AccountReference: reference,
-          TransactionDesc: "Vites Facilitation Fee",
+          TransactionDesc: "Apex Finance Facilitation Fee",
         }),
       }
     );

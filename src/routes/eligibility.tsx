@@ -7,9 +7,9 @@ import {
 export const Route = createFileRoute("/eligibility")({
   head: () => ({
     meta: [
-      { title: "Check Eligibility — Vites" },
-      { name: "description", content: "Find out in seconds if you qualify for a Vites loan. Fast, simple, and commitment-free." },
-      { property: "og:title", content: "Check Loan Eligibility — Vites" },
+      { title: "Check Eligibility — Apex Finance" },
+      { name: "description", content: "Find out in seconds if you qualify for an Apex Finance loan. Fast, simple, and commitment-free." },
+      { property: "og:title", content: "Check Loan Eligibility — Apex Finance" },
       { property: "og:description", content: "30-second eligibility check. Instant personal offer." },
     ],
   }),

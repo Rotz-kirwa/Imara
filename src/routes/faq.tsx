@@ -3,10 +3,10 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 export const Route = createFileRoute("/faq")({
   head: () => ({
     meta: [
-      { title: "FAQ — Vites" },
-      { name: "description", content: "Answers to common questions about Vites loans, eligibility, repayment, and security." },
-      { property: "og:title", content: "Vites FAQ" },
-      { property: "og:description", content: "Everything you need to know about Vites loans." },
+      { title: "FAQ — Apex Finance" },
+      { name: "description", content: "Answers to common questions about Apex Finance loans, eligibility, repayment, and security." },
+      { property: "og:title", content: "Apex Finance FAQ" },
+      { property: "og:description", content: "Everything you need to know about Apex Finance loans." },
     ],
   }),
   component: FaqPage,
@@ -16,7 +16,7 @@ const FAQS = [
   {
     section: "Getting started",
     items: [
-      { q: "What is Vites?", a: "Vites is a mobile-first lending platform that delivers instant loans straight to your phone — designed for the speed and reality of African daily life." },
+      { q: "What is Apex Finance?", a: "Apex Finance is a mobile-first lending platform that delivers instant loans straight to your phone — designed for the speed and reality of African daily life." },
       { q: "Who can apply?", a: "Anyone over 18 with a valid national ID, an active mobile money account, and a steady source of income." },
       { q: "How long does approval take?", a: "Most loans are approved in under 60 seconds and disbursed within 2 minutes." },
     ],
@@ -34,7 +34,7 @@ const FAQS = [
     section: "Security & privacy",
     items: [
       { q: "Is my data safe?", a: "Yes. We use 256-bit encryption, biometric login, and never share your information with third parties without consent." },
-      { q: "Is Vites licensed?", a: "Yes. Vites is fully licensed and regulated as a digital credit provider." },
+      { q: "Is Apex Finance licensed?", a: "Yes. Apex Finance is fully licensed and regulated as a digital credit provider." },
     ],
   },
 ];

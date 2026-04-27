@@ -74,7 +74,7 @@ export async function initiateStkPush(
       PhoneNumber: formatPhone(phone),
       CallBackURL: env.callbackUrl,
       AccountReference: reference,
-      TransactionDesc: "Vites Facilitation Fee",
+      TransactionDesc: "Apex Finance Facilitation Fee",
     }),
   });
 

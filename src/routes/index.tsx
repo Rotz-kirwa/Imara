@@ -9,9 +9,9 @@ import { LoanTicker } from "@/components/LoanTicker";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Vites — Get Instant Loans Straight to Your Phone" },
-      { name: "description", content: "Fast approval, flexible repayment, transparent fees. Apply for a Vites loan in minutes and receive funds directly to your mobile money." },
-      { property: "og:title", content: "Vites — Instant Mobile Loans" },
+      { title: "Apex Finance — Get Instant Loans Straight to Your Phone" },
+      { name: "description", content: "Fast approval, flexible repayment, transparent fees. Apply for an Apex Finance loan in minutes and receive funds directly to your mobile money." },
+      { property: "og:title", content: "Apex Finance — Instant Mobile Loans" },
       { property: "og:description", content: "Money in your phone in minutes. Trusted by thousands across Africa." },
     ],
   }),
@@ -41,7 +41,7 @@ function Hero() {
       <div className="absolute inset-0">
         <img
           src={heroImg}
-          alt="Happy young woman in Nairobi smiling at her phone after receiving a Vites loan"
+          alt="Happy young woman in Nairobi smiling at her phone after receiving an Apex Finance loan"
           className="h-full w-full object-cover"
           width={1600}
           height={1200}
@@ -189,7 +189,7 @@ function Benefits() {
     <section className="bg-secondary/30 py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeading
-          eyebrow="Why Vites"
+          eyebrow="Why Apex Finance"
           title="Built for trust. Designed for speed."
           subtitle="Everything you need from a modern lender — and nothing you don't."
         />
@@ -261,8 +261,8 @@ function LoanFeatures() {
 
 function Testimonials() {
   const items = [
-    { name: "Amina K.", role: "Boutique owner, Nairobi", quote: "I got my stock loan approved in 3 minutes. Vites literally saved my business that week." },
-    { name: "Brian O.", role: "Boda boda rider", quote: "No bank would talk to me. With Vites I bought a second motorbike and doubled my income." },
+    { name: "Amina K.", role: "Boutique owner, Nairobi", quote: "I got my stock loan approved in 3 minutes. Apex Finance literally saved my business that week." },
+    { name: "Brian O.", role: "Boda boda rider", quote: "No bank would talk to me. With Apex Finance I bought a second motorbike and doubled my income." },
     { name: "Wanjiru M.", role: "Teacher", quote: "Transparent fees, friendly app. I always know exactly what I'll pay back. No surprises." },
   ];
   return (
