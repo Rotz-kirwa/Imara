@@ -138,6 +138,17 @@ export async function queryStkStatus(
     const json = await res.json() as { ResultCode?: string; ResultDesc?: string; errorCode?: string };
     if (json.errorCode) return { ResultCode: "", ResultDesc: "", pending: true };
 
+    const desc = (json.ResultDesc ?? "").toLowerCase();
+    const stillProcessing =
+      desc.includes("under processing") ||
+      desc.includes("still processing") ||
+      desc.includes("being processed") ||
+      desc.includes("transaction is being");
+
+    if (stillProcessing || !json.ResultCode) {
+      return { ResultCode: "", ResultDesc: json.ResultDesc ?? "", pending: true };
+    }
+
     return { ResultCode: json.ResultCode ?? "", ResultDesc: json.ResultDesc ?? "", pending: false };
   } catch {
     return { ResultCode: "", ResultDesc: "", pending: true };
