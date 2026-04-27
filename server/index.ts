@@ -1,6 +1,5 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
-import { cors } from "hono/cors";
 import stkHandler      from "../api/mpesa/stk";
 import queryHandler    from "../api/mpesa/query";
 import callbackHandler from "../api/mpesa/callback";
@@ -8,14 +7,21 @@ import saveHandler     from "../api/applications/save";
 
 const app = new Hono();
 
-app.use(
-  "*",
-  cors({
-    origin: process.env.FRONTEND_URL ?? "*",
-    allowMethods: ["GET", "POST", "OPTIONS"],
-    allowHeaders: ["Content-Type"],
-  }),
-);
+// Manual CORS — runs before every request including OPTIONS preflight
+app.use("*", async (c, next) => {
+  const origin = process.env.FRONTEND_URL ?? "*";
+  c.header("Access-Control-Allow-Origin", origin);
+  c.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  c.header("Access-Control-Allow-Headers", "Content-Type");
+  c.header("Access-Control-Max-Age", "86400");
+
+  // Respond to preflight immediately
+  if (c.req.method === "OPTIONS") {
+    return new Response(null, { status: 204 });
+  }
+
+  await next();
+});
 
 // Wrap existing Fetch-API handlers — no code duplication
 function mount(handler: (req: Request) => Promise<Response>) {
