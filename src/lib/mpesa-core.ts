@@ -1,5 +1,9 @@
 // Pure M-Pesa helpers — no framework dependencies, runs in any JS environment
 
+const MPESA_BASE = process.env.MPESA_ENV === "production"
+  ? "https://api.safaricom.co.ke"
+  : "https://sandbox.safaricom.co.ke";
+
 export function formatPhone(phone: string): string {
   const clean = phone.replace(/[\s+\-()]/g, "");
   if (clean.startsWith("0")) return `254${clean.slice(1)}`;
@@ -25,7 +29,7 @@ export function mkPassword(shortCode: string, passkey: string, ts: string): stri
 
 export async function getToken(key: string, secret: string): Promise<string> {
   const res = await fetch(
-    "https://api.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials",
+    `${MPESA_BASE}/oauth/v1/generate?grant_type=client_credentials`,
     { headers: { Authorization: `Basic ${btoa(`${key}:${secret}`)}` } },
   );
   if (!res.ok) {
@@ -45,7 +49,7 @@ export async function initiateStkPush(
   const ts    = timestamp();
   const pwd   = mkPassword(env.shortcode, env.passkey, ts);
 
-  const res = await fetch("https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest", {
+  const res = await fetch(`${MPESA_BASE}/mpesa/stkpush/v1/processrequest`, {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
     body: JSON.stringify({
@@ -87,7 +91,7 @@ export async function queryStkStatus(
     const ts    = timestamp();
     const pwd   = mkPassword(env.shortcode, env.passkey, ts);
 
-    const res = await fetch("https://api.safaricom.co.ke/mpesa/stkpushquery/v1/query", {
+    const res = await fetch(`${MPESA_BASE}/mpesa/stkpushquery/v1/query`, {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
       body: JSON.stringify({
