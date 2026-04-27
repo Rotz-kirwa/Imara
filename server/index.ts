@@ -7,17 +7,23 @@ import saveHandler     from "../api/applications/save";
 
 const app = new Hono();
 
+const corsHeaders = () => ({
+  "Access-Control-Allow-Origin": process.env.FRONTEND_URL ?? "*",
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type",
+  "Access-Control-Max-Age": "86400",
+});
+
 // Manual CORS — runs before every request including OPTIONS preflight
 app.use("*", async (c, next) => {
-  const origin = process.env.FRONTEND_URL ?? "*";
-  c.header("Access-Control-Allow-Origin", origin);
-  c.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-  c.header("Access-Control-Allow-Headers", "Content-Type");
-  c.header("Access-Control-Max-Age", "86400");
+  const headers = corsHeaders();
+  for (const [key, value] of Object.entries(headers)) {
+    c.header(key, value);
+  }
 
   // Respond to preflight immediately
   if (c.req.method === "OPTIONS") {
-    return c.body(null, 204);
+    return new Response(null, { status: 204, headers });
   }
 
   await next();
