@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect, useRef } from "react";
 import { z } from "zod";
-import { stkPush, queryStk } from "@/lib/mpesa";
 import { saveLoanApplication } from "@/lib/applications";
 import {
   CheckCircle2, Sparkles, Loader2, Zap,
@@ -10,9 +9,35 @@ import {
 } from "lucide-react";
 
 type PaymentPhase = "notice" | "stk" | "flow";
-type StkResponse = Awaited<ReturnType<typeof stkPush>>;
+type StkResponse  = { checkoutRequestId: string; merchantRequestId: string };
+type QueryResult  = { ResultCode: string; ResultDesc: string; pending?: boolean };
 
 const stkRequests = new Map<string, Promise<StkResponse>>();
+
+async function callStkPush(phone: string, reference: string): Promise<StkResponse> {
+  const res = await fetch("/api/mpesa/stk", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ phone, reference }),
+  });
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    throw new Error(text || "STK push failed");
+  }
+  const json = await res.json() as StkResponse & { error?: string };
+  if (json.error) throw new Error(json.error);
+  return json;
+}
+
+async function callQueryStk(checkoutRequestId: string): Promise<QueryResult> {
+  const res = await fetch("/api/mpesa/query", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ checkoutRequestId }),
+  });
+  if (!res.ok) return { ResultCode: "", ResultDesc: "", pending: true };
+  return res.json() as Promise<QueryResult>;
+}
 
 function getStkRequest(phone: string, reference: string, forceNew = false) {
   const key = `${reference}:${phone.replace(/\s/g, "")}`;
@@ -21,7 +46,7 @@ function getStkRequest(phone: string, reference: string, forceNew = false) {
   const current = stkRequests.get(key);
   if (current) return current;
 
-  const request = stkPush({ data: { phone, reference } }).catch((error) => {
+  const request = callStkPush(phone, reference).catch((error) => {
     stkRequests.delete(key);
     throw error;
   });
@@ -407,7 +432,7 @@ function StkPending({
     const interval = setInterval(async () => {
       if (!checkoutId.current) return;
       try {
-        const result = await queryStk({ data: { checkoutRequestId: checkoutId.current } });
+        const result = await callQueryStk(checkoutId.current);
         if (result.pending) return;
         if (result.ResultCode === "0") {
           clearInterval(interval);

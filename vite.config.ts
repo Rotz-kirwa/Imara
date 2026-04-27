@@ -1,5 +1,6 @@
 import { defineConfig } from "vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
+import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import viteReact from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import tsConfigPaths from "vite-tsconfig-paths";
@@ -9,12 +10,12 @@ export default defineConfig(({ command }) => ({
   plugins: [
     tsConfigPaths({ projects: ["./tsconfig.json"] }),
     tailwindcss(),
-    tanstackStart(),
-    viteReact(),
-    // Cloudflare plugin only for Cloudflare Workers builds, not Vercel
-    ...(command === "build" && !process.env.VERCEL
-      ? [cloudflare({ viteEnvironment: { name: "ssr" } })]
-      : []),
+    // Vercel: plain Vite SPA (TanStack Router only, no SSR server).
+    // Cloudflare/local: full TanStack Start SSR + Cloudflare Workers.
+    ...(process.env.VERCEL
+      ? [tanstackRouter(), viteReact()]
+      : [tanstackStart(), viteReact(),
+         ...(command === "build" ? [cloudflare({ viteEnvironment: { name: "ssr" } })] : [])]),
   ],
   resolve: {
     alias: { "@": `${process.cwd()}/src` },
