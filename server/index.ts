@@ -7,19 +7,32 @@ import saveHandler     from "../api/applications/save";
 
 const app = new Hono();
 
-const corsHeaders = () => ({
-  "Access-Control-Allow-Origin": process.env.FRONTEND_URL ?? "*",
-  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type",
-  "Access-Control-Max-Age": "86400",
-});
+const ALLOWED_ORIGINS = (process.env.FRONTEND_URL ?? "")
+  .split(",")
+  .map((o) => o.trim())
+  .filter(Boolean);
 
-function withCors(response: Response) {
+function getAllowOrigin(requestOrigin: string | null): string {
+  if (ALLOWED_ORIGINS.length === 0) return "*";
+  if (!requestOrigin) return ALLOWED_ORIGINS[0];
+  return ALLOWED_ORIGINS.includes(requestOrigin) ? requestOrigin : ALLOWED_ORIGINS[0];
+}
+
+function corsHeaders(origin: string | null) {
+  return {
+    "Access-Control-Allow-Origin": getAllowOrigin(origin),
+    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Max-Age": "86400",
+    "Vary": "Origin",
+  };
+}
+
+function withCors(response: Response, origin: string | null) {
   const headers = new Headers(response.headers);
-  for (const [key, value] of Object.entries(corsHeaders())) {
+  for (const [key, value] of Object.entries(corsHeaders(origin))) {
     headers.set(key, value);
   }
-
   return new Response(response.body, {
     status: response.status,
     statusText: response.statusText,
@@ -29,12 +42,12 @@ function withCors(response: Response) {
 
 // Manual CORS — runs before every request including OPTIONS preflight
 app.use("*", async (c, next) => {
-  const headers = corsHeaders();
+  const origin = c.req.header("Origin") ?? null;
+  const headers = corsHeaders(origin);
   for (const [key, value] of Object.entries(headers)) {
     c.header(key, value);
   }
 
-  // Respond to preflight immediately
   if (c.req.method === "OPTIONS") {
     return new Response(null, { status: 204, headers });
   }
@@ -44,7 +57,8 @@ app.use("*", async (c, next) => {
 
 // Wrap existing Fetch-API handlers — no code duplication
 function mount(handler: (req: Request) => Promise<Response>) {
-  return async (c: { req: { raw: Request } }) => withCors(await handler(c.req.raw));
+  return async (c: { req: { raw: Request; header: (name: string) => string | undefined } }) =>
+    withCors(await handler(c.req.raw), c.req.header("Origin") ?? null);
 }
 
 app.post("/api/mpesa/stk",          mount(stkHandler));
