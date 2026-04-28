@@ -7,7 +7,7 @@ import saveHandler     from "../api/applications/save";
 
 const app = new Hono();
 
-const ALLOWED_ORIGINS = (process.env.FRONTEND_URL ?? "")
+const ALLOWED_ORIGINS = (process.env.CORS_ORIGIN ?? process.env.FRONTEND_URL ?? "")
   .split(",")
   .map((o) => o.trim())
   .filter(Boolean);
