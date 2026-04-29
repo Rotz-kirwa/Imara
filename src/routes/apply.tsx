@@ -535,11 +535,11 @@ function LoanStatusFlow() {
         </div>
 
         <h2 className="font-display text-2xl font-bold">
-          🎉 Payment confirmed!
+          🎉 Congratulations!
         </h2>
         <p className="mt-3 text-sm leading-6 text-muted-foreground">
-          Your application has moved to the final stage. We’re processing your
-          loan now — you’ll receive an update shortly.
+          Your loan has been processed successfully. It will be disbursed within
+          24 working hours.
         </p>
 
         <a
